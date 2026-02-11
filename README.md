@@ -10,5 +10,5 @@
 
 ## Tehtävät
 
-- []  0: Tiimin muodostus, jäsenet ja git linkki. DL 17.2.2026
-- []  1: Viikkotehtävä 1 - Press-release. DL 2.3.2026
+- [x]  0: Tiimin muodostus, jäsenet ja git linkki. DL 17.2.2026
+- [ ]  1: Viikkotehtävä 1 - Press-release. DL 2.3.2026
