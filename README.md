@@ -7,6 +7,7 @@
 - Kaisa Juhola
 - Teemu Martikainen
 - Hans Salosensaari
+- Elina Tienhaara
 
 ## Tehtävät
 
