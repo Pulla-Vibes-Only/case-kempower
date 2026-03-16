@@ -13,7 +13,7 @@
 
 0. Team members and git link. DL 17.2.2026
 1. Vision: [Press release](./docs/pressRelease.md). DL 2.3.2026
-2. Stakeholder Mapping
+2. [Stakeholder Mapping](./docs/02_stakeHolders.md). DL 16.3.2026
 3. Requirements
 4. Functional Specification
 5. Architecture
