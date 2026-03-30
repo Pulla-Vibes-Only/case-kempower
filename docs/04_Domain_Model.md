@@ -40,3 +40,6 @@ Operating system &emsp; <1 --- 1..\*> &emsp; Operating system language
 
 Light &emsp; <1..\* --- 1> &emsp; Operating device/touch screen  
 Light &emsp; <1 ---- ..\*> &emsp; Light status
+
+![lighthead](https://github.com/user-attachments/assets/b3e89b86-c765-4beb-bb16-a7a5d6b5e7a1)
+
