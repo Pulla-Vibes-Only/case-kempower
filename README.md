@@ -34,6 +34,6 @@
 │   └── 03_Product Scope            # Home work 3b: Prototype Description
 │   └── 04_Domain_Model             # Home work 4: Domain Model
 ├── src/
-│   └── (empty for now)
+│   └── lightHeadApp
 └── README.md
 ```
