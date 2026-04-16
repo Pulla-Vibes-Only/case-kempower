@@ -2,6 +2,7 @@
 # PullA Vibes
 
 from ui import UI, mainTitle, title, breadcrumb, success, warning, error
+from translations import Translations
 
 # UI Colors:
 # LoginMenu: CYAN
@@ -10,12 +11,16 @@ from ui import UI, mainTitle, title, breadcrumb, success, warning, error
 # LightControlMenu: BLUE
 # PresetMenu: MAGENTA
 # MaintenanceMenu: RED
-
+#
+# Current Languages:
+# ENG = English
+# FIN = Finnish
+# SWE = Swedish
 
 class LightHeadApp:
     def __init__(self):
         self.rooms = {
-            1: {"occupied": False, "lights": {"main": False, "bathroom": False}},
+            1: {"occupied": False, "lights": {"main": False, "bathroom": False, "bed": False}},
             2: {"occupied": True},
             3: {"occupied": False},
             4: {"occupied": True},
@@ -23,6 +28,7 @@ class LightHeadApp:
         }
         self.current_user = None
         self.running = True
+        self.current_lang = "ENG"
 
     def run(self):
         while self.running:
@@ -30,11 +36,11 @@ class LightHeadApp:
 
     # --- LOGIN ---
     def login_menu(self):
-        mainTitle("WELCOME TO OUR HOTEL!", UI.CYAN)
-        title("LOGIN", UI.CYAN)
+        mainTitle(Translations.translate(self.current_lang, "welcome"), UI.CYAN)
+        title(Translations.translate(self.current_lang, "login"), UI.CYAN)
         breadcrumb(["Login"])
-        username = input("Username: ").strip()
-        password = input("Password: ").strip()
+        username = input(Translations.translate(self.current_lang, "login" + ":")).strip()
+        password = input(Translations.translate(self.current_lang, "password" + ":")).strip()
 
         if username == "visitor" and password == "visitor123":
             self.current_user = "visitor"
@@ -43,21 +49,22 @@ class LightHeadApp:
             self.current_user = "staff"
             self.staff_menu()
         else:
-            error("Invalid credentials.")
+            error(Translations.translate(self.current_lang, "invalid_credentials"))
 
     # --- VISITOR MENU ---
     def visitor_menu(self):
         while True:
-            title("VISITOR MENU", UI.GREEN)
-            breadcrumb(["Visitor"])
+            title(Translations.translate(self.current_lang, "visitor_menu"), UI.GREEN)
+            breadcrumb([Translations.translate(self.current_lang, "visitor")])
 
-            print(UI.GREEN + " 1 - Enter/Exit your room")
-            print(" 2 - Control lights")
-            print(" 3 - Select lightning preset")
-            print(" 4 - Log out of app")
-            print(" 5 - Log out of hotel" + UI.RESET)
+            print(UI.GREEN + " 1 - ", Translations.translate(self.current_lang, "visitor_menu_1"))
+            print(" 2 - ", Translations.translate(self.current_lang, "visitor_menu_2"))
+            print(" 3 - ", Translations.translate(self.current_lang, "visitor_menu_3"))
+            print(" 4 - ", Translations.translate(self.current_lang, "visitor_menu_4"))
+            print(" 5 - ", Translations.translate(self.current_lang, "visitor_menu_5"))
+            print(" 6 - ", Translations.translate(self.current_lang, "visitor_menu_6") + UI.RESET)
 
-            choice = input("\nInsert your choice: ")
+            choice = input("\n"+ Translations.translate(self.current_lang, "insert_choice") +": ")
 
             if choice == "1":
                 self.toggle_room_occupancy(1)
@@ -66,12 +73,15 @@ class LightHeadApp:
             elif choice == "3":
                 self.preset_menu()
             elif choice == "4":
-                success("Logged out.")
-                return
+                self.language_menu()
             elif choice == "5":
+                success(Translations.translate(self.current_lang, "logged_out"))
+                self.current_lang = "ENG"
+                return
+            elif choice == "6":
                 self.logout_hotel()
             else:
-                error("Invalid choice.")
+                error(Translations.translate(self.current_lang, "invalid_choice"))
 
     # --- STAFF MENU ---
     def staff_menu(self):
@@ -99,26 +109,26 @@ class LightHeadApp:
     def toggle_room_occupancy(self, room_id):
         room = self.rooms[room_id]
         if not room["occupied"]:
-            success("You entered your room.")
+            success(Translations.translate(self.current_lang, "enter_room"))
             room["occupied"] = True
         else:
-            success("You entered your room.")
+            success(Translations.translate(self.current_lang, "exit_room"))
             room["occupied"] = False
 
     # --- LIGHT CONTROL MENU ---
     def light_control_menu(self):
         while True:
             title("LIGHT CONTROL", UI.BLUE)
-            breadcrumb(["Visitor", "Light Control"])
+            breadcrumb([Translations.translate(self.current_lang, "visitor"), Translations.translate(self.current_lang, "light_control")])
 
-            print(UI.BLUE + " 1 - Check lights")
-            print(" 2 - Select a room")
-            print(" 3 - Turn every light off")
-            print(" 4 - Select lightning preset")
-            print(" 5 - Log out of app")
-            print(" 6 - Log out of hotel" + UI.RESET)
+            print(UI.BLUE + " 1 -", Translations.translate(self.current_lang, "light_menu_1"))
+            print(" 2 -", Translations.translate(self.current_lang, "light_menu_2"))
+            print(" 3 -", Translations.translate(self.current_lang, "light_menu_3"))
+            print(" 4 -", Translations.translate(self.current_lang, "light_menu_4"))
+            print(" 5 -", Translations.translate(self.current_lang, "light_menu_5"))
+            print(" 6 -", Translations.translate(self.current_lang, "light_menu_6") + UI.RESET)
 
-            choice = input("\nInsert your choice: ")
+            choice = input("\n"+ Translations.translate(self.current_lang, "insert_choice")+":")
 
             if choice == "1":
                 print("Checking lights (placeholder).")
@@ -129,40 +139,74 @@ class LightHeadApp:
             elif choice == "4":
                 self.preset_menu()
             elif choice == "5":
-                success("Logged out.")
+                success(Translations.translate(self.current_lang, "logged_out"))
                 return
             elif choice == "6":
                 self.logout_hotel()
             else:
-                error("Invalid choice.")
+                error(Translations.translate(self.current_lang, "invalid_choice"))
 
     # --- PRESET MENU ---
     def preset_menu(self):
         while True:
-            title("LIGHTING PRESETS", UI.MAGENTA)
-            breadcrumb(["Visitor", "Presets"])
+            title(Translations.translate(self.current_lang, "lighting_presets"), UI.MAGENTA)
+            breadcrumb([Translations.translate(self.current_lang, "visitor"), Translations.translate(self.current_lang, "presets")])
 
-            print(UI.MAGENTA + " 1 - Relaxing")
-            print(" 2 - Bright energetic")
-            print(" 3 - Movie mode")
-            print(" 4 - Wild disco caveman")
-            print(" 5 - Log out of app")
-            print(" 6 - Log out of hotel")
-            print(" 7 - Go back" + UI.RESET)
+            print(UI.MAGENTA + " 1 -", Translations.translate(self.current_lang, "preset_menu_1"))
+            print(" 2 -", Translations.translate(self.current_lang, "preset_menu_2"))
+            print(" 3 -", Translations.translate(self.current_lang, "preset_menu_3"))
+            print(" 4 -", Translations.translate(self.current_lang, "preset_menu_4"))
+            print(" 5 -", Translations.translate(self.current_lang, "preset_menu_5"))
+            print(" 6 -", Translations.translate(self.current_lang, "preset_menu_6"))
+            print(" 7 -", Translations.translate(self.current_lang, "preset_menu_7") + UI.RESET)
 
-            choice = input("\nInsert your choice: ")
+            choice = input("\n"+ Translations.translate(self.current_lang, "insert_choice")+":")
 
             if choice in ["1", "2", "3", "4"]:
-                success(f"Preset {choice} selected.")
+                success(f"{Translations.translate(self.current_lang, "preset")} {choice} {Translations.translate(self.current_lang, "selected")}")
             elif choice == "5":
-                success("Logged out.")
+                success(Translations.translate(self.current_lang, "logged_out"))
                 return
             elif choice == "6":
                 self.logout_hotel()
             elif choice == "7":
                 return
             else:
-                error("Invalid choice.")
+                error(Translations.translate(self.current_lang, "invalid_choice"))
+
+    # REQ-002 The guest is able to choose the operating system language
+    def language_menu(self):
+        while True:
+            title(Translations.translate(self.current_lang, "language_menu"), UI.MAGENTA)
+            breadcrumb([Translations.translate(self.current_lang, "visitor"), Translations.translate(self.current_lang, "language")])
+
+            print(UI.MAGENTA + " 1 -", Translations.translate(self.current_lang, "lang_menu_1"))
+            print(" 2 -", Translations.translate(self.current_lang, "lang_menu_2"))
+            print(" 3 -", Translations.translate(self.current_lang, "lang_menu_3"))
+            print(" 4 -", Translations.translate(self.current_lang, "lang_menu_4"))
+            print(" 5 -", Translations.translate(self.current_lang, "lang_menu_5"))
+            print(" 6 -",Translations.translate(self.current_lang, "lang_menu_6") + UI.RESET)
+
+            choice = input("\n"+Translations.translate(self.current_lang, "insert_choice")+":")
+
+            if choice == "1":
+                self.current_lang = "ENG"
+                success(f"{Translations.translate(self.current_lang, "lang_menu_1")} {Translations.translate(self.current_lang, "selected")}")
+            elif choice == "2":
+                self.current_lang = "FIN"
+                success(f"{Translations.translate(self.current_lang, "lang_menu_2")} {Translations.translate(self.current_lang, "selected")}")
+            elif choice == "3":
+                self.current_lang = "SWE"
+                success(f"{Translations.translate(self.current_lang, "lang_menu_3")} {Translations.translate(self.current_lang, "selected")}")
+            elif choice == "4":
+                success("Logged out.")
+                return
+            elif choice == "5":
+                self.logout_hotel()
+            elif choice == "6":
+                return
+            else:
+                error(Translations.translate(self.current_lang, "invalid_choice"))
 
     # --- STAFF ROOM SELECTION ---
     def room_selection_menu(self):
@@ -228,23 +272,24 @@ class LightHeadApp:
                 error("Invalid choice.")
 
     # TODO: KeyError: 'lights' when trying to toggle lights in unoccupied room.
+    # TODO: IMPLEMENTOI HUONE LUOKKA
     def toggle_main_lights(self, room_id):
         room = self.rooms[room_id]
         current = room["lights"]["main"]
         room["lights"]["main"] = not current
         room["lights"]["bathroom"] = not current
         state = "on" if room["lights"]["main"] else "off"
-        success(f"Main lights turned {state}.")
+        success(f"{Translations.translate(self.current_lang, "main_lights_turned")} {Translations.translate(self.current_lang, state)}.")
 
     # --- LOGOUT HOTEL ---
     def logout_hotel(self):
-        warning("\nLogging out of hotel...")
-        print("Turning off all lights and resetting presets...")
+        warning("\n"+Translations.translate(self.current_lang, "logging_out_hotel"))
+        print(Translations.translate(self.current_lang, "turn_lights_reset"))
         for room in self.rooms.values():
             if "lights" in room:
                 for light in room["lights"]:
                     room["lights"][light] = False
-        print(UI.RED + "Goodbye! Hotel system shutting down." + UI.RESET)
+        print(UI.RED + Translations.translate(self.current_lang, "end_msg") + UI.RESET)
         exit()
 
 if __name__ == "__main__":
