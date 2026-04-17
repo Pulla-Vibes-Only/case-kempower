@@ -54,8 +54,8 @@ class LightHeadApp:
         mainTitle(Translations.translate(self.current_lang, "welcome"), UI.CYAN)
         title(Translations.translate(self.current_lang, "login"), UI.CYAN)
         breadcrumb(["Login"])
-        username = "visitor"# input(Translations.translate(self.current_lang, "login" + ":")).strip()
-        password = "visitor123" # input(Translations.translate(self.current_lang, "password" + ":")).strip()
+        username = input(Translations.translate(self.current_lang, "login" + ":")).strip()
+        password = input(Translations.translate(self.current_lang, "password" + ":")).strip()
 
         user = self.users.authenticate(username, password)
         print(user)
