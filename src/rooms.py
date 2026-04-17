@@ -1,37 +1,119 @@
-class Rooms:
-    def __init__(self, rooms: dict[int, dict]):
-        self.__rooms = rooms
+from dataclasses import dataclass, field
 
-    def get_sections(self, room_id: int):
-        return list(self.__rooms.get(room_id, {}).get("sections", {}).keys())
 
-    def get_brightness(self, room_id: int, section: str):
-        return (
-            self.__rooms
-            .get(room_id, {})
-            .get("sections", {})
-            .get(section, {})
-            .get("brightness")
+'''
+# You can create a room with only an ID room101 = Room(101) --> Room with default sections and LightingSettings
+#
+# Special rooms with more sections can be created with room helper function from_zone_names
+# You can use it like room312 = Room.from_zone_names(ID ,["Basement", "Storageroom"] etc. sets default Lighting settings)
+'''
+
+SUITES = {301,302,303}
+COLORS = ["Relaxing",
+          "Bright energetic",
+          "Movie mode",
+          "Wild disco caveman",
+          "White",
+          "Red",
+          "Green",
+          "Blue"]
+
+@dataclass
+class LightingSettings:
+    brightness: int = 0
+    color: str = "white"
+
+def default_sections():
+    return {
+        "main": LightingSettings(),
+        "bedroom": LightingSettings(),
+        "bathroom": LightingSettings()
+    }
+
+@dataclass
+class Room:
+    id: int
+    zones: dict[str, LightingSettings] = field(default_factory=default_sections)
+    occupancy: bool = False
+    available: bool = False
+    room_type: str = "basic"
+
+    @classmethod
+    def from_zone_names(cls, id: int, names: list[str]):
+        print(id)
+        if id in SUITES:
+            print("TUOLLA")
+            roomtype = "suite"
+        else:
+            print("TÄÄLLÄ")
+            roomtype = "basic"
+        return cls(
+            id=id,
+            zones={name: LightingSettings() for name in names},
+            occupancy = False,
+            available = True,
+            room_type = roomtype
         )
+
+    def get_sections(self):
+        return list(self.zones.keys())
+
+    def get_brightness(self, zone: str):
+        return self.zones[zone].brightness
+
+    def set_brightness(self, zone: str, value: int):
+        self.zones[zone].brightness = value
+
+    def get_color(self, zone: str):
+        return self.zones[zone].color
+    
+    def set_color(self, zone: str, color: int):
+        self.zones[zone].color = COLORS[color]
+    
+    def get_occupancy(self):
+        return self.occupancy
+    
+    def set_lights_off(self):
+        for zone in self.zones:
+            self.zones[zone].brightness = 0
+            self.zones[zone].color = COLORS[4]
+
+    def set_lights_all_zones(self, color: int):
+        for zone in self.zones:
+            self.zones[zone].brightness = 0
+            self.zones[zone].color = COLORS[color]
+    
+
+class Rooms:
+    def __init__(self):
+        self._rooms: dict[int, Room] = {}
+
+    def add_room(self, room: Room):
+        self._rooms[room.id] = room
+
+    def get_room(self, room_id: int):
+        return self._rooms[room_id]
+    
+    # To get room id and zones all at once
+    def room_items(self):
+        return sorted(self._rooms.items())
+    
+    def __iter__(self):
+        return iter(self._rooms.values())
     
 if __name__ == "__main__":
-    rooms = {
-        101: {
-            "sections": {
-                "bathroom": {"brightness": 70, "color": "white"},
-                "bed": {"brightness": 40, "color": "white"},
-                "main": {"brightness": 0, "color": "white"}
-            }
-        },
-        102: {
-            "sections": {
-                "bathroom": {"brightness": 60, "color": "white"},
-                "bed": {"brightness": 30, "color": "white"},
-                "main": {"brightness": 80, "color": "white"}
-            }
-        }
-    }
-    r = Rooms(rooms)
+    room201 = Room(201)
+    room101 = Room(304)
+    room1 = Room(405)
+    room2 = Room.from_zone_names(7, ["base", "test", "a"])
 
-    print(r.get_brightness(101, "bed"))
-    print(r.get_sections(102))
+    rooms = Rooms()
+    rooms.add_room(room101)
+    rooms.add_room(room201)
+    rooms.add_room(room1)
+    rooms.add_room(room2)
+    for room in rooms:
+        print(room)
+    room1.occupancy = True
+    for room in rooms:
+        print(room)
