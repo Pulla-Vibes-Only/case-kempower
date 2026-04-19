@@ -1,1 +1,12 @@
 Tehtäväpalautukset
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Pytest
+.pytest_cache/
+
+# Virtual environment (if you ever add one)
+venv/
+.env/
