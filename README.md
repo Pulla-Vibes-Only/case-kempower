@@ -34,7 +34,11 @@
 │   └── 03_Product Scope            # Home work 3b: Prototype Description
 │   └── 04_Domain_Model             # Home work 4: Domain Model
 ├── src/
-│   └── lightHeadApp
+│   lightHeadApp.py
+│   rooms.py
+│   translations.py
+│   ui.py
+│   userhandler.py
 ├── tests/
 │   test_lightHeadApp.py
 │   test_rooms.py
@@ -59,12 +63,12 @@ The project uses [pytest](https://pytest.org) for testing. The tests are located
 ### Requirements
 
 Install pytest before running the tests:
-pip install pytest
+`pip install pytest`
 
 ### Running the tests
 
 Run all tests from the project root:
-python -m pytest tests/ -v
+`python -m pytest tests/ -v`
 
 Run a single test file:
-python -m pytest tests/test_rooms.py -v
+`python -m pytest tests/test_rooms.py -v`
