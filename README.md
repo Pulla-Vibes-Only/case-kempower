@@ -34,16 +34,16 @@
 │   └── 03_Product Scope            # Home work 3b: Prototype Description
 │   └── 04_Domain_Model             # Home work 4: Domain Model
 ├── src/
-│   lightHeadApp.py
-│   rooms.py
-│   translations.py
-│   ui.py
-│   userhandler.py
+│   └── lightHeadApp.py
+│   └── rooms.py
+│   └── translations.py
+│   └── ui.py
+│   └── userhandler.py
 ├── tests/
-│   test_lightHeadApp.py
-│   test_rooms.py
-│   test_translations.py
-│   test_userhandler.py
+│   └── test_lightHeadApp.py
+│   └── test_rooms.py
+│   └── test_translations.py
+│   └── test_userhandler.py
 └── README.md
 ```
 
