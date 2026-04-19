@@ -1,3 +1,5 @@
+#translations.py
+
 # REQ-002 The guest is able to choose the operating system language
 
 class Translations:
