@@ -1,69 +1,97 @@
-"""
-test_userhandler.py
+# Tests for translations.py
 # PullA Vibes
-
-Tests for userhandler.py — User, UserManager
-
-Run with: pytest test_userhandler.py -v
-"""
+# Tests cover English, Finnish and Swedish translations for key strings,
+# fallback behavior for missing keys and unknown languages,
+# and a parity check that all three languages have identical keys.
 
 import sys
 import pytest
 
-from userhandler import User, UserManager
+sys.path.insert(0, "..")
+
+from translations import Translations
 
 
-class TestUser:
-    def test_visitor_user_fields(self):
-        user = User("alice", "pass123", "visitor", room_type="basic", room_id=101)
-        assert user.username == "alice"
-        assert user.password == "pass123"
-        assert user.role == "visitor"
-        assert user.room_type == "basic"
-        assert user.room_id == 101
+class TestTranslationsEnglish:
+    def test_welcome(self):
+        # English welcome message should match expected string
+        assert Translations.translate("ENG", "welcome") == "WELCOME TO OUR HOTEL!"
 
-    def test_staff_user_no_room(self):
-        user = User("staff", "staffpass", "staff")
-        assert user.room_id is None
-        assert user.room_type is None
+    def test_login(self):
+        # English login label should match expected string
+        assert Translations.translate("ENG", "login") == "LOGIN"
 
-    def test_suite_visitor(self):
-        user = User("visitor301", "pass", "visitor", room_type="suite", room_id=301)
-        assert user.room_type == "suite"
-        assert user.room_id == 301
+    def test_zone_names(self):
+        # English zone names should return untranslated plain English strings
+        assert Translations.translate("ENG", "main") == "main"
+        assert Translations.translate("ENG", "bedroom") == "bedroom"
+        assert Translations.translate("ENG", "bathroom") == "bathroom"
+
+    def test_on_off(self):
+        # English on/off strings should be "on" and "off"
+        assert Translations.translate("ENG", "on") == "on"
+        assert Translations.translate("ENG", "off") == "off"
+
+    def test_brightness_limits(self):
+        # English brightness limit messages should mention min and max
+        assert "min" in Translations.translate("ENG", "brightness_min").lower()
+        assert "max" in Translations.translate("ENG", "brightness_max").lower()
 
 
-class TestUserManager:
-    def setup_method(self):
-        self.manager = UserManager()
-        self.manager.add_user(User("visitor101", "visitor123", "visitor", room_id=101, room_type="basic"))
-        self.manager.add_user(User("staff", "staff123", "staff"))
+class TestTranslationsFinnish:
+    def test_welcome(self):
+        # Finnish welcome message should match expected string
+        assert Translations.translate("FIN", "welcome") == "TERVETULOA HOTELLIIMME!"
 
-    def test_authenticate_valid_visitor(self):
-        user = self.manager.authenticate("visitor101", "visitor123")
-        assert user is not None
-        assert user.role == "visitor"
+    def test_login(self):
+        # Finnish login label should match expected string
+        assert Translations.translate("FIN", "login") == "KIRJAUDU"
 
-    def test_authenticate_valid_staff(self):
-        user = self.manager.authenticate("staff", "staff123")
-        assert user is not None
-        assert user.role == "staff"
+    def test_zone_names(self):
+        # Finnish zone names should return correct Finnish translations
+        assert Translations.translate("FIN", "main") == "pää"
+        assert Translations.translate("FIN", "bedroom") == "makuuhuone"
+        assert Translations.translate("FIN", "bathroom") == "kylpyhuone"
 
-    def test_authenticate_wrong_password(self):
-        assert self.manager.authenticate("visitor101", "wrongpass") is None
+    def test_on_off(self):
+        # Finnish on/off strings should be "päälle" and "pois"
+        assert Translations.translate("FIN", "on") == "päälle"
+        assert Translations.translate("FIN", "off") == "pois"
 
-    def test_authenticate_unknown_user(self):
-        assert self.manager.authenticate("ghost", "anything") is None
 
-    def test_authenticate_empty_credentials(self):
-        assert self.manager.authenticate("", "") is None
+class TestTranslationsSwedish:
+    def test_welcome(self):
+        # Swedish welcome message should match expected string
+        assert Translations.translate("SWE", "welcome") == "VÄLKOMMEN TILL VÅRT HOTELL!"
 
-    def test_add_user_overwrite(self):
-        self.manager.add_user(User("visitor101", "newpass", "visitor", room_id=102))
-        user = self.manager.authenticate("visitor101", "newpass")
-        assert user is not None
-        assert user.room_id == 102
+    def test_login(self):
+        # Swedish login label should match expected string
+        assert Translations.translate("SWE", "login") == "LOGGA IN"
 
-    def test_old_password_invalid_after_overwrite(self):
-        self.manager.add_user(User("visitor101", "newpass", "visitor", room_id=102))
-        assert self.manager.authenticate("visitor101", "visitor123") is None
+    def test_zone_names(self):
+        # Swedish zone names should return correct Swedish translations
+        assert Translations.translate("SWE", "sauna") == "bastu"
+        assert Translations.translate("SWE", "balcony") == "balkong"
+
+    def test_on_off(self):
+        # Swedish on/off strings should be "på" and "av"
+        assert Translations.translate("SWE", "on") == "på"
+        assert Translations.translate("SWE", "off") == "av"
+
+
+class TestTranslationsFallback:
+    def test_missing_key_returns_key(self):
+        # A key that does not exist should be returned as-is
+        assert Translations.translate("ENG", "nonexistent_key_xyz") == "nonexistent_key_xyz"
+
+    def test_unknown_language_returns_key(self):
+        # An unsupported language code should return the key as-is
+        assert Translations.translate("DEU", "welcome") == "welcome"
+
+    def test_all_languages_have_same_keys(self):
+        # All three languages should have exactly the same set of translation keys
+        eng_keys = set(Translations._translations["ENG"].keys())
+        fin_keys = set(Translations._translations["FIN"].keys())
+        swe_keys = set(Translations._translations["SWE"].keys())
+        assert eng_keys == fin_keys, f"FIN missing keys: {eng_keys - fin_keys}"
+        assert eng_keys == swe_keys, f"SWE missing keys: {eng_keys - swe_keys}"
