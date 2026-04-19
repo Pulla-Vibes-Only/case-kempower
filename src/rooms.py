@@ -40,9 +40,7 @@ class Room:
 
     @classmethod
     def from_zone_names(cls, id: int, names: list[str]):
-        print(id)
         if id in SUITES:
-            print("TUOLLA")
             roomtype = "suite"
         else:
             print("TÄÄLLÄ")
@@ -78,11 +76,14 @@ class Room:
             self.zones[zone].brightness = 0
             self.zones[zone].color = COLORS[4]
 
-    def set_lights_all_zones(self, color: int):
+    def set_lights_on(self):
         for zone in self.zones:
-            self.zones[zone].brightness = 0
+            self.zones[zone].brightness = 100
+            self.zones[zone].color = COLORS[4]
+
+    def set_color_all_zones(self, color: int):
+        for zone in self.zones:
             self.zones[zone].color = COLORS[color]
-    
 
 class Rooms:
     def __init__(self):

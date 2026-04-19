@@ -42,7 +42,12 @@ class LightHeadApp:
         self.rooms.add_room(Room.from_zone_names(301, ["main", "sauna", "balcony"]))
 
     def _init_users(self):
-        self.users.add_user(User("visitor", "visitor123", "visitor",room_id=101, room_type="basic"))
+        self.users.add_user(User("visitor101", "visitor123", "visitor",room_id=101, room_type="basic"))
+        self.users.add_user(User("visitor102", "visitor123", "visitor",room_id=102, room_type="basic"))
+        self.users.add_user(User("visitor103", "visitor123", "visitor",room_id=103, room_type="basic"))
+        self.users.add_user(User("visitor201", "visitor123", "visitor",room_id=201, room_type="basic"))
+        self.users.add_user(User("visitor202", "visitor123", "visitor",room_id=201, room_type="basic"))
+        self.users.add_user(User("visitor301", "visitor123", "visitor",room_id=301, room_type="suite"))
         self.users.add_user(User("staff", "staff123", "staff"))    
 
     def run(self):
@@ -50,6 +55,7 @@ class LightHeadApp:
             self.login_menu()
 
     # --- LOGIN ---
+    # REQ 007 - The system must be easy to install and scalable
     def login_menu(self):
         mainTitle(Translations.translate(self.current_lang, "welcome"), UI.CYAN)
         title(Translations.translate(self.current_lang, "login"), UI.CYAN)
@@ -58,7 +64,6 @@ class LightHeadApp:
         password = input(Translations.translate(self.current_lang, "password" + ":")).strip()
 
         user = self.users.authenticate(username, password)
-        print(user)
         if user:
             self.current_user = user
             if user.role == "visitor":
@@ -80,8 +85,8 @@ class LightHeadApp:
                 print(" 2 - ", Translations.translate(self.current_lang, "visitor_menu_2"))
                 print(" 3 - ", Translations.translate(self.current_lang, "visitor_menu_3"))
                 print(" 4 - ", Translations.translate(self.current_lang, "visitor_menu_4"))
-                print(" 5 - ", Translations.translate(self.current_lang, "visitor_menu_5"))
-                print(" 6 - ", Translations.translate(self.current_lang, "return") + UI.RESET)
+                # FOR DEMO REASONS ALSO LOGS OUT OF APP - IN REAL WORLD THE SYSTEM SHOULD ALWAYS BE IN READY STATE
+                print(" 5 - ", Translations.translate(self.current_lang, "visitor_menu_5") + UI.RESET)
 
             choice = input("\n"+ Translations.translate(self.current_lang, "insert_choice") +": ")
 
@@ -96,9 +101,10 @@ class LightHeadApp:
             elif choice == "5" and occupancy:
                 success(Translations.translate(self.current_lang, "logged_out"))
                 self.current_lang = "ENG"
+                self.current_room.available = True
+                # FOR DEMO REASONS COMMENTED OUT TO SEE OCCUPANCY IN STAFF MODE
+                #self.current_room.occupancy = False
                 return
-            elif choice == "6" and occupancy:
-                self.logout_hotel()
             else:
                 error(Translations.translate(self.current_lang, "invalid_choice"))
 
@@ -110,7 +116,6 @@ class LightHeadApp:
 
             print(UI.YELLOW + " 1 - Select a room")
             print(" 2 - Log out of app")
-            print(" 3 - Log out of hotel" + UI.RESET)
 
             choice = input("\nInsert your choice: ")
 
@@ -119,12 +124,11 @@ class LightHeadApp:
             elif choice == "2":
                 success("Logged out.")
                 return
-            elif choice == "3":
-                self.logout_hotel()
             else:
                 error("Invalid choice.")
 
     # --- ROOM OCCUPANCY ---
+    # REQ 003 - The system is energy efficient (for example, lights stay off if room is empty)
     def toggle_room_occupancy(self, room_id):
         room = self.current_room
         if not room.get_occupancy():
@@ -149,7 +153,8 @@ class LightHeadApp:
             print(" 5 -", Translations.translate(self.current_lang, "return") + UI.RESET)
 
             choice = input("\n"+ Translations.translate(self.current_lang, "insert_choice")+":")
-
+            # REQ 004 - The system control device (touch screen) clearly indicates the status of every light in the room
+            # REQ 012 - The control device displays possible rooms (bathroom, kitchen etc) separately
             if choice == "1":
                 print("Light status:")
                 room = self.rooms.get_room(self.current_room.id)
@@ -169,7 +174,7 @@ class LightHeadApp:
                 return
             else:
                 error(Translations.translate(self.current_lang, "invalid_choice"))
-
+    # REQ 012 - The control device displays possible rooms (bathroom, kitchen etc) separately
     def select_room_menu(self):
         while True:
             title(Translations.translate(self.current_lang, "zones"), UI.MAGENTA)
@@ -177,33 +182,45 @@ class LightHeadApp:
             zones = list(enumerate(self.current_room.zones))
             for index, zone in zones:
                 print(UI.MAGENTA + f" {index+1} - ", Translations.translate(self.current_lang, zone).capitalize())
-            print(f" {len(zones)+1} - ", Translations.translate(self.current_lang, "return").capitalize())
+            print(f" {len(zones)+1} - ", Translations.translate(self.current_lang, "all_zones").capitalize())
+            print(f" {len(zones)+2} - ", Translations.translate(self.current_lang, "return").capitalize())
             print(UI.RESET)
 
             choice = input("\n"+ Translations.translate(self.current_lang, "insert_choice")+":")
             
             try:
                 choice = int(choice)
-                if choice < 1 or choice > len(zones)+1:
+                if choice < 1 or choice > len(zones)+2:
                     raise ValueError("Invalid choice range.")
             except:
                 error(Translations.translate(self.current_lang, "invalid_choice"))
                 continue
-
             if choice in range(1, len(zones)+1):
+                print("HERE", len(zones), choice)
                 self.zone_light_control_menu(zones[choice-1][1])
+            elif choice == len(zones)+1:
+                self.zone_light_control_menu("all_zones") 
             else:
                 return
-    
+    # REQ 012 - The control device displays possible rooms (bathroom, kitchen etc) separately
     def zone_light_control_menu(self, zone: str):
          while True:
+            room = self.rooms.get_room(self.current_room.id)
+            all_zones = zone == "all_zones"
             title(Translations.translate(self.current_lang, zone).capitalize(), UI.MAGENTA)
             breadcrumb([Translations.translate(self.current_lang, "visitor"), Translations.translate(self.current_lang, "light_control"),
                         Translations.translate(self.current_lang, "zones").lower().capitalize(), Translations.translate(self.current_lang, zone).capitalize()])
-            room = self.rooms.get_room(self.current_room.id)
-            settings = room.zones[zone]
+            if not all_zones:
+                settings = room.zones[zone]
+            # REQ 004 - The system control device (touch screen) clearly indicates the status of every light in the room
+                print(UI.CYAN + (Translations.translate(self.current_lang, "current_color") + ": " + settings.color).ljust(40), 
+                    Translations.translate(self.current_lang, "current_brightness") + ": " + str(settings.brightness), "\n")
+            else:
+                for i_zone in self.current_room.zones:
+                    print(UI.CYAN + i_zone.capitalize())
+                    print((Translations.translate(self.current_lang, "current_color") + ": " + room.zones[i_zone].color).ljust(40), 
+                    Translations.translate(self.current_lang, "current_brightness") + ": " + str(room.zones[i_zone].brightness), "\n")
 
-            print(UI.CYAN + ("Current Color: " +  settings.color).ljust(40), "Current Brightness:", settings.brightness, "\n")
             print((" + - " + Translations.translate(self.current_lang, "add_brightness")).ljust(40), "- -", Translations.translate(self.current_lang, "lower_brightness"), "\n")
             print((Translations.translate(self.current_lang, "static_colors") + ":").ljust(40), Translations.translate(self.current_lang, "presets") + ":")
             print((" 1 - " +  Translations.translate(self.current_lang, "preset_menu_1")).ljust(40), " 5 - " + Translations.translate(self.current_lang, "white"))
@@ -213,20 +230,32 @@ class LightHeadApp:
             print(" 9 -", Translations.translate(self.current_lang, "return") + UI.RESET)
 
             choice = input("\n" + Translations.translate(self.current_lang, "insert_choice")+":")
-
-            brightness = self.current_room.get_brightness(zone)
+            
+            # REQ 009 - The brightness, color and color temperature can be adjusted
+            if not all_zones:
+                brightness = self.current_room.get_brightness(zone)
             if choice == "+":
-                if brightness + 10 <= 100:
-                    self.current_room.set_brightness(zone, brightness + 10)
-                    success(Translations.translate(self.current_lang, "brightness_adjusted") + ": " + str(brightness+10))
+                if all_zones:
+                    for i_zone in room.zones:
+                        if room.zones[i_zone].brightness + 10 <= 100:
+                            room.set_brightness(i_zone, room.get_brightness(i_zone) + 10)
                 else:
-                    warning(Translations.translate(self.current_lang, "brightness_max"))
+                    if brightness + 10 <= 100:
+                        room.set_brightness(zone, brightness + 10)
+                        success(Translations.translate(self.current_lang, "brightness_adjusted") + ": " + str(brightness+10))
+                    else:
+                        warning(Translations.translate(self.current_lang, "brightness_max"))
             elif choice == "-":
-                if brightness - 10 >= 0:
-                    self.current_room.set_brightness(zone, brightness - 10)
-                    success(Translations.translate(self.current_lang, "brightness_adjusted") + ": " + str(brightness-10))
+                if all_zones:
+                    for i_zone in room.zones:
+                        if room.zones[i_zone].brightness - 10 >= 0:
+                            room.set_brightness(i_zone, room.get_brightness(i_zone) - 10)
                 else:
-                    warning(Translations.translate(self.current_lang, "brightness_min"))
+                    if brightness - 10 >= 0:
+                        room.set_brightness(zone, brightness - 10)
+                        success(Translations.translate(self.current_lang, "brightness_adjusted") + ": " + str(brightness-10))
+                    else:
+                        warning(Translations.translate(self.current_lang, "brightness_min"))
             else:
                 try:
                     choice = int(choice)
@@ -237,12 +266,17 @@ class LightHeadApp:
                     continue
 
                 if choice in range(1, 9):
-                    self.current_room.set_color(zone, choice-1)
-                    success(Translations.translate(self.current_lang, "color_changed") + ": " + str(self.current_room.get_color(zone)))
+                    if all_zones:
+                        room.set_lights_all_zones(choice-1)
+                    else:
+                        room.set_color(zone, choice-1)
+                        success(Translations.translate(self.current_lang, "color_changed") + ": " + str(self.current_room.get_color(zone)))
                 else:
                     return
 
     # --- PRESET MENU ---
+    # REQ 009 - The brightness, color and color temperature can be adjusted
+    # REQ 013 - The system has pre-installed lightning setups for different moods and situations
     def preset_menu(self):
         while True:
             title(Translations.translate(self.current_lang, "lighting_presets"), UI.MAGENTA)
@@ -298,39 +332,41 @@ class LightHeadApp:
                 error(Translations.translate(self.current_lang, "invalid_choice"))
 
     # --- STAFF ROOM SELECTION ---
+    
     def room_selection_menu(self):
         while True:
+            rooms = []
             title("ROOM SELECTION", UI.YELLOW)
             breadcrumb(["Staff", "Room Selection"])
 
             for room_id, data in self.rooms.room_items():
-                status = "occupied" if data.get_occupancy() else "free"
-                print(f" {data.room_type} - Room {room_id}: {status}")
-
-            print("\n 6 - Log out of app")
-            print(" 7 - Log out of hotel")
-            print(" 8 - Go back")
+                rooms.append(room_id)
+                status = "Occupied" if data.get_occupancy() else "Free"
+                print(f"Room {room_id}:")
+                print(f"\tRoom type: {data.room_type} {3*" "}|{3*" "} Occupancy: {status}")
+            print("\n 9 - Go back")
 
             choice = input("\nInsert your choice: ")
 
-            if choice.isdigit():
-                room_id = int(choice)
-                if room_id in self.rooms:
-                    if self.rooms[room_id]["occupied"]:
-                        warning("Room occupied! Cannot enter.")
-                    else:
-                        self.maintenance_menu(room_id)
-                elif room_id == 6:
-                    success("Logged out.")
-                    return
-                elif room_id == 7:
-                    self.logout_hotel()
-                elif room_id == 8:
-                    return
-                else:
-                    error("Invalid room number.")
-            else:
+            try:
+                if (int(choice) in rooms or choice == "9"):
+                    choice = int(choice)
+            except:
                 error("Invalid input.")
+                continue
+
+            if choice == 9:
+                return
+            else:
+                for room in self.rooms:
+                    print(room.id, choice)
+                    if room.id == choice:
+                        self.current_room = room
+                
+                if self.current_room.occupancy == True:
+                    warning("Room occupied! Cannot enter.")
+                else:
+                    self.maintenance_menu(self.current_room.id)
 
     # --- MAINTENANCE MENU ---
     def maintenance_menu(self, room_id):
@@ -338,38 +374,24 @@ class LightHeadApp:
             title(f"MAINTENANCE ROOM {room_id}", UI.RED)
             breadcrumb(["Staff", "Room Selection", f"Room {room_id}", "Maintenance"])
 
-            print(UI.RED + " 1 - Turn on/off main lights")
-            print(" 2 - Test system")
-            print(" 3 - Log out of app")
-            print(" 4 - Log out of hotel")
-            print(" 5 - Go back" + UI.RESET)
+            print(UI.RED + " 1 - Turn on cleaning lights")
+            print(UI.RED + " 2 - Control lights")
+            print(" 3 - Leave room (Reset lights)" + UI.RESET)
 
             choice = input("\nInsert your choice: ")
 
             if choice == "1":
-                self.toggle_main_lights(room_id)  
+                self.current_room.set_lights_on()
             elif choice == "2":
-                print("Testing system (placeholder).")
+                self.zone_light_control_menu("all_zones")
             elif choice == "3":
-                success("Logged out.")
-                return
-            elif choice == "4":
-                self.logout_hotel()
-            elif choice == "5":
+                success("Turning off all lights and resettings presets...")
                 return
             else:
                 error("Invalid choice.")
-
-    # TODO: KeyError: 'lights' when trying to toggle lights in unoccupied room.
-    # TODO: IMPLEMENTOI HUONE LUOKKA
-    def toggle_main_lights(self, room_id):
-        room = self.rooms.get_room(room_id)
-        current = room["lights"]["main"]
-        room["lights"]["main"] = not current
-        room["lights"]["bathroom"] = not current
-        state = "on" if room["lights"]["main"] else "off"
-        success(f"{Translations.translate(self.current_lang, "main_lights_turned")} {Translations.translate(self.current_lang, state)}.")
-
+        
+    """
+    # DO WE NEED THIS ????????????????
     # --- LOGOUT HOTEL ---
     # TODO : Implementoi room
     def logout_hotel(self):
@@ -381,6 +403,7 @@ class LightHeadApp:
                     room["lights"][light] = False
         print(UI.RED + Translations.translate(self.current_lang, "end_msg") + UI.RESET)
         exit()
+    """
 
 if __name__ == "__main__":
     app = LightHeadApp()
