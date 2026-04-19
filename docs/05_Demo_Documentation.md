@@ -4,6 +4,18 @@
 
 ## 1. Vision and Need
 
+**LightHead3000Smart+** is a hotel room lighting control system designed to improve guest comfort, reduce energy consumption, and support hotel staff in managing room environments efficiently.
+
+The system simulates a real hotel lighting controller with:
+
+- A simple, intuitive interface for guests
+- A centralized control panel for staff
+- Automatic energy‑saving behavior
+- Multi‑language support
+- Pre‑installed lighting presets for different moods
+
+The goal is to demonstrate a complete software product lifecycle: from requirements to architecture, implementation, and testing.
+
 ## 2. Requirements
 
 ### 2.1 Functional Requirements
@@ -76,7 +88,46 @@ flowchart TD
 
 ### 3.2 Components
 
+#### LightHeadApp
+
+- Main controller
+- Handles menus, navigation, and user flow
+- Connects user actions to room logic
+
+#### Rooms & Room
+
+- Stores all room objects
+- Each room contains:
+  - Zones (main, bedroom, bathroom, or custom suite zones)
+  - Lighting settings (brightness + color)
+  - Occupancy state
+  - Room type (basic/suite)
+
+#### UserManager & User
+
+- Authentication
+- Role‑based access (visitor vs staff)
+- Visitors are linked to specific rooms
+
+#### UI
+
+- Provides consistent CLI formatting
+- Color‑coded menus for clarity
+
+#### Translations
+
+- Provides multilingual support
+- All UI strings routed through translation layer
+
 ### 3.3 Design Decisions
+
+| What | Why? |
+| --- | ---|
+| Dataclasses used for Room, LightingSettings, User | Clean and maintainable |
+| Zone‑based lighting |  |
+| Role‑based menus | Different capabilities for visitors and staff |
+| Breadcrumb navigation | Improves usability in CLI |
+| Scalable room initialization | Adding new rooms is trivial |
 
 ## 4. Testing
 
