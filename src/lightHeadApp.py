@@ -267,7 +267,7 @@ class LightHeadApp:
 
                 if choice in range(1, 9):
                     if all_zones:
-                        room.set_lights_all_zones(choice-1)
+                        room.set_color_all_zones(choice-1)
                     else:
                         room.set_color(zone, choice-1)
                         success(Translations.translate(self.current_lang, "color_changed") + ": " + str(self.current_room.get_color(zone)))
@@ -299,7 +299,7 @@ class LightHeadApp:
                 continue
 
             if choice in range(1, 5):
-                self.current_room.set_lights_all_zones(choice-1)
+                self.current_room.set_color_all_zones(choice-1)
                 success(f"{Translations.translate(self.current_lang, "preset")} {choice} {Translations.translate(self.current_lang, "selected")}")
             else:
                 return
@@ -369,6 +369,7 @@ class LightHeadApp:
                     self.maintenance_menu(self.current_room.id)
 
     # --- MAINTENANCE MENU ---
+    # REQ 005 - every room can be controlled through hotel central system by hotel personnel
     def maintenance_menu(self, room_id):
         while True:
             title(f"MAINTENANCE ROOM {room_id}", UI.RED)
