@@ -35,5 +35,36 @@
 │   └── 04_Domain_Model             # Home work 4: Domain Model
 ├── src/
 │   └── lightHeadApp
+├── tests/
+│   test_lightHeadApp.py
+│   test_rooms.py
+│   test_translations.py
+│   test_userhandler.py
 └── README.md
 ```
+
+## Tests
+
+The project uses [pytest](https://pytest.org) for testing. The tests are located in the `tests/` folder and are organized by source file.
+
+### Structure
+
+| Test file | Source file | What is tested |
+|---|---|---|
+| `test_rooms.py` | `rooms.py` | LightingSettings, Room construction, brightness, color, occupancy, lights on/off, Rooms collection |
+| `test_userhandler.py` | `userhandler.py` | User field storage, authentication, invalid credentials, user overwriting |
+| `test_translations.py` | `translations.py` | English, Finnish and Swedish translations, fallback behavior, key parity across languages |
+| `test_lightHeadApp.py` | `lightHeadApp.py` | App initialization, occupancy toggle flow, lighting presets, staff access, language switching |
+
+### Requirements
+
+Install pytest before running the tests:
+pip install pytest
+
+### Running the tests
+
+Run all tests from the project root:
+python -m pytest tests/ -v
+
+Run a single test file:
+python -m pytest tests/test_rooms.py -v
