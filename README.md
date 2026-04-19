@@ -17,11 +17,8 @@
 3. Requirements:  
    3a. [Product Requirements](./docs/03_Requirements.md) DL 23.3.2026  
    3b. [Prototype Scope](./docs/03_Prototype_Scope.md) DL 23.3.2026  
-4. Architecture 1: [Domain Model](./docs/04_Domain_Model.md) DL 30.3.2026  
-5. Architecture 2
-6. Test Plan & Cases
-7. Code
-8. DEMO
+4. Architecture: [Domain Model](./docs/04_Domain_Model.md) DL 30.3.2026  
+5. Demo: [Demo Documentation](./docs/05_Demo_Documentation.md) DL 20.4.2026
 
 ## Project Structure
 
@@ -33,12 +30,13 @@
 │   └── 03_Requirements             # Home work 3a: Listing of product requirements
 │   └── 03_Product Scope            # Home work 3b: Prototype Description
 │   └── 04_Domain_Model             # Home work 4: Domain Model
+│   └── 05_Demo_Documentation       # Home work 5: Project presentation & documentation
 ├── src/
-│   └── lightHeadApp.py
-│   └── rooms.py
-│   └── translations.py
-│   └── ui.py
-│   └── userhandler.py
+│   └── lightHeadApp.py             # Main application logic
+│   └── rooms.py                    # Room model + lighting settings
+│   └── translations.py             # Multilingual support
+│   └── ui.py                       # CLI UI utilities
+│   └── userhandler.py              # User model + authentication
 ├── tests/
 │   └── test_lightHeadApp.py
 │   └── test_rooms.py
