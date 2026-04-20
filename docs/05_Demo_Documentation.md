@@ -1,7 +1,5 @@
 # LightHead3000Smart+ - Hotel Room Lightning Control System
 
-## Demo documentation
-
 ## 1. Vision and Need
 
 **LightHead3000Smart+** is a hotel room lighting control system designed to improve guest comfort, reduce energy consumption, and support hotel staff in managing room environments efficiently.
@@ -372,7 +370,13 @@ Tests are organized into four files, each corresponding to a source file.
 | LS-02 | Switch to Swedish | App language updates to SWE |
 | LS-03 | Switch back to English | App language restores to ENG |
 
-### 4.7 Developer User Testing
+### 4.7. Pass and Fail Criteria
+
+**Pass:** All tests collected by pytest complete with status PASSED and no errors are reported.
+
+**Fail:** Any test returns FAILED or ERROR. Failures must be investigated, the defect fixed in the source code, and the tests re-run before the build is considered stable.
+
+### 4.8 Developer User Testing
 
 In addition to automated tests, the developers performed manual user testing
 by running the application in the terminal and going through all available
@@ -408,14 +412,6 @@ During testing the team discussed whether the light reset on room exit
 should also reset brightness to a specific default level. It was decided
 that this feature will not be implemented at this stage, but it has been
 noted as a potential improvement for future development.
-
----
-
-## 7. Pass and Fail Criteria
-
-**Pass:** All tests collected by pytest complete with status PASSED and no errors are reported.
-
-**Fail:** Any test returns FAILED or ERROR. Failures must be investigated, the defect fixed in the source code, and the tests re-run before the build is considered stable.
 
 ## 5. What we learned
 
