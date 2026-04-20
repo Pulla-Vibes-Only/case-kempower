@@ -11,14 +11,16 @@
 
 ## Homework
 
-0. Team members and git link. DL 17.2.2026
-1. Vision: [Press release](./docs/pressRelease.md). DL 2.3.2026
-2. [Stakeholder Mapping](./docs/02_stakeHolders.md). DL 16.3.2026  
-3. Requirements:  
-   3a. [Product Requirements](./docs/03_Requirements.md) DL 23.3.2026  
-   3b. [Prototype Scope](./docs/03_Prototype_Scope.md) DL 23.3.2026  
-4. Architecture: [Domain Model](./docs/04_Domain_Model.md) DL 30.3.2026  
-5. Demo: [Demo Documentation](./docs/05_Demo_Documentation.md) DL 20.4.2026
+1. Team members and git link
+2. Vision: [Press release](./docs/pressRelease.md)
+3. [Stakeholder Mapping](./docs/02_stakeHolders.md)  
+4. Requirements:  
+   3a. [Product Requirements](./docs/03_Requirements.md)  
+   3b. [Prototype Scope](./docs/03_Prototype_Scope.md)  
+5. Architecture: [Domain Model](./docs/04_Domain_Model.md)
+6. Demo:  
+   5a. [Demo Documentation](./docs/05_Demo_Documentation.md)  
+   5b. [Demo Video](https://www.youtube.com/watch?v=NOsp9kxdg4U&t=1s)
 
 ## Project Structure
 
