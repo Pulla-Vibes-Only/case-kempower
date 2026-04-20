@@ -135,4 +135,18 @@ To be implemented
 
 ## 5. What we learned
 
-???
+We learned that software development is not just writing code, but also:
+- understanding what we are building and why (what problem we are solving)
+- communicating with the team and stakeholders
+- documenting my work
+- planning the structure and architecture
+- working according to the plan and modify it as necessary
+
+We learned concretely to:
+- identify stakeholders and create a stakeholder map
+- write requirements wih a right level of detail (yes, we did it too abstract first)
+- prioritize the requirements
+- make a domain model (it was already partly familiar, but it's worth repeating)
+- make a prototype
+
+And also we learned that we have a great team with wonderful and skilled people!
