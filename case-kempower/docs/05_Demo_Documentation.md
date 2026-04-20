@@ -123,8 +123,8 @@ flowchart TD
 
 | What | Why? |
 | --- | ---|
-| Dataclasses used for Room, LightingSettings, User | Clean and maintainable |
-| Zone‑based lighting |  |
+| Dataclasses used for Room, LightingSettings, User | Clean and maintainable, easily scalable |
+| Zone‑based lighting | Customisation possibility depending on the hotel room design and user's preference; increased energy efficiency |
 | Role‑based menus | Different capabilities for visitors and staff |
 | Breadcrumb navigation | Improves usability in CLI |
 | Scalable room initialization | Adding new rooms is trivial |
