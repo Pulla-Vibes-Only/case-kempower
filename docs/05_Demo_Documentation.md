@@ -131,7 +131,291 @@ flowchart TD
 
 ## 4. Testing
 
-To be implemented
+# Test Plan — LightHead Hotel Lighting System
+
+### 4.1 Introduction
+
+This document describes the test plan for the LightHead Hotel Lighting System.
+The system allows hotel guests and staff to control room lighting through a
+command-line interface. The tests cover the core logic of the application
+including room and lighting management, user authentication, multilingual
+support, and integrated application flows.
+
+---
+
+### 4.2 Scope
+
+#### In scope
+- Room and lighting settings logic (`rooms.py`)
+- User management and authentication (`userhandler.py`)
+- Multilingual translation system (`translations.py`)
+- Core application flows (`lightHeadApp.py`)
+
+#### Out of scope
+- UI rendering and terminal output (`ui.py`)
+- Manual end-to-end testing through the interactive menu
+- Performance and load testing
+
+---
+
+### 4.3 Test Objectives
+
+- Verify that rooms are created correctly with the right defaults and zone configurations
+- Verify that brightness and color can be set and retrieved per zone independently
+- Verify that occupancy toggling correctly updates room state and lighting
+- Verify that user authentication accepts valid credentials and rejects invalid ones
+- Verify that all three languages return correct translations for all keys
+- Verify that the application initializes with the expected rooms, users, and language
+- Verify that lighting presets and staff maintenance flows work as expected
+
+---
+
+### 4.4 Test Environment
+
+| Property | Value |
+|---|---|
+| Language | Python 3.13 |
+| Test framework | pytest |
+| Operating system | Windows |
+| Execution command | `python -m pytest tests/ -v` |
+
+---
+
+### 4.5 Test Structure
+
+Tests are organized into four files, each corresponding to a source file.
+
+| Test file | Source file |
+|---|---|
+| `tests/test_rooms.py` | `src/rooms.py` |
+| `tests/test_userhandler.py` | `src/userhandler.py` |
+| `tests/test_translations.py` | `src/translations.py` |
+| `tests/test_lightHeadApp.py` | `src/lightHeadApp.py` |
+
+---
+
+### 4.6 Test Cases
+
+#### 4.6.1 LightingSettings
+
+| ID | Test | Expected result |
+|---|---|---|
+| LS-01 | Default brightness | Brightness initializes to 0 |
+| LS-02 | Default color | Color initializes to "white" |
+| LS-03 | Custom values | Custom brightness and color are stored correctly |
+
+#### 4.6.2 Room — Default Construction
+
+| ID | Test | Expected result |
+|---|---|---|
+| RD-01 | Default zones exist | Room has main, bedroom and bathroom zones |
+| RD-02 | Default occupancy | Occupancy is False |
+| RD-03 | Default availability | Available is False |
+| RD-04 | Default room type | Room type is "basic" |
+| RD-05 | Room ID stored | Room stores the given ID correctly |
+
+#### 4.6.3 Room — from_zone_names
+
+| ID | Test | Expected result |
+|---|---|---|
+| RZ-01 | Custom zones created | Only the given zones are created |
+| RZ-02 | Available after creation | Room is marked as available |
+| RZ-03 | Suite type for suite ID | Room type is "suite" for IDs in SUITES |
+| RZ-04 | Basic type for non-suite ID | Room type is "basic" for IDs not in SUITES |
+| RZ-05 | Default lighting in zones | All zones start with brightness 0 |
+
+#### 4.6.4 Room — Brightness
+
+| ID | Test | Expected result |
+|---|---|---|
+| RB-01 | Default brightness | Brightness is 0 before any changes |
+| RB-02 | Set and get brightness | Brightness updates correctly |
+| RB-03 | Set brightness to zero | Brightness can be set back to 0 |
+| RB-04 | Set brightness to max | Brightness accepts 100 |
+| RB-05 | Brightness isolated per zone | Changing one zone does not affect others |
+
+#### 4.6.5 Room — Color
+
+| ID | Test | Expected result |
+|---|---|---|
+| RC-01 | Default color | Color is "white" before any changes |
+| RC-02 | Set color by index | Index maps to correct color in COLORS |
+| RC-03 | All valid indices | Every COLORS index sets and retrieves correctly |
+| RC-04 | Set color all zones | All zones updated to the same color |
+| RC-05 | Color isolated per zone | Changing one zone does not affect others |
+
+#### 4.6.6 Room — Occupancy
+
+| ID | Test | Expected result |
+|---|---|---|
+| RO-01 | Default occupancy | Occupancy is False on a new room |
+| RO-02 | Set occupancy true | Occupancy reflects True after being set |
+
+#### 4.6.7 Room — Lights Switching
+
+| ID | Test | Expected result |
+|---|---|---|
+| RL-01 | Lights off | All zones set to brightness 0 and color White |
+| RL-02 | Lights on | All zones set to brightness 100 and color White |
+| RL-03 | Lights off after on | Brightness resets to 0 after turning off |
+| RL-04 | Get sections | Returns all zone names |
+
+#### 4.6.8 Rooms Collection
+
+| ID | Test | Expected result |
+|---|---|---|
+| RC-01 | Add and get room | Room retrievable by ID after adding |
+| RC-02 | Get second room | Multiple rooms independently retrievable |
+| RC-03 | Iterate over rooms | All rooms returned when iterating |
+| RC-04 | Sorted room items | room_items returns rooms sorted by ID |
+| RC-05 | Overwrite same ID | Adding a room with existing ID replaces the old one |
+
+#### 4.6.9 User
+
+| ID | Test | Expected result |
+|---|---|---|
+| US-01 | Visitor fields | All fields stored correctly |
+| US-02 | Staff user no room | room_id and room_type are None |
+| US-03 | Suite visitor | Suite room type and room ID stored correctly |
+
+#### 4.6.10 UserManager — Authentication
+
+| ID | Test | Expected result |
+|---|---|---|
+| UA-01 | Valid visitor login | Returns visitor User object |
+| UA-02 | Valid staff login | Returns staff User object |
+| UA-03 | Wrong password | Returns None |
+| UA-04 | Unknown user | Returns None |
+| UA-05 | Empty credentials | Returns None |
+| UA-06 | Overwrite user | New user replaces old one under same username |
+| UA-07 | Old password after overwrite | Old password no longer authenticates |
+
+#### 4.6.11 Translations — English
+
+| ID | Test | Expected result |
+|---|---|---|
+| TE-01 | Welcome message | Returns correct English string |
+| TE-02 | Login label | Returns correct English string |
+| TE-03 | Zone names | Returns plain English zone names |
+| TE-04 | On/off strings | Returns "on" and "off" |
+| TE-05 | Brightness limits | Messages contain "min" and "max" |
+
+#### 4.6.12 Translations — Finnish
+
+| ID | Test | Expected result |
+|---|---|---|
+| TF-01 | Welcome message | Returns correct Finnish string |
+| TF-02 | Login label | Returns correct Finnish string |
+| TF-03 | Zone names | Returns correct Finnish translations |
+| TF-04 | On/off strings | Returns "päälle" and "pois" |
+
+#### 4.6.13 Translations — Swedish
+
+| ID | Test | Expected result |
+|---|---|---|
+| TS-01 | Welcome message | Returns correct Swedish string |
+| TS-02 | Login label | Returns correct Swedish string |
+| TS-03 | Zone names | Returns correct Swedish translations |
+| TS-04 | On/off strings | Returns "på" and "av" |
+
+#### 4.6.14 Translations — Fallback
+
+| ID | Test | Expected result |
+|---|---|---|
+| TB-01 | Missing key | Returns the key itself |
+| TB-02 | Unknown language | Returns the key itself |
+| TB-03 | Key parity | All three languages have identical keys |
+
+#### 4.6.15 App Initialization
+
+| ID | Test | Expected result |
+|---|---|---|
+| AI-01 | Default language | App starts with English |
+| AI-02 | Rooms initialized | All default rooms present on startup |
+| AI-03 | Suite 301 zones | Room 301 has main, sauna and balcony zones |
+| AI-04 | Users initialized | Default visitor and staff authenticate successfully |
+| AI-05 | Invalid user | Non-existent user is not authenticated |
+
+#### 4.6.16 Occupancy Toggle
+
+| ID | Test | Expected result |
+|---|---|---|
+| OT-01 | Enter room sets occupancy | Room marked as occupied |
+| OT-02 | Enter room sets brightness | Main zone brightness set to 50 |
+| OT-03 | Exit room clears occupancy | Room marked as unoccupied |
+| OT-04 | Exit room turns off lights | All zones set to brightness 0 |
+
+#### 4.6.17 Lighting Presets
+
+| ID | Test | Expected result |
+|---|---|---|
+| LP-01 | Preset 1 Relaxing | All zones set to Relaxing color |
+| LP-02 | Preset 2 Bright energetic | All zones set to Bright energetic color |
+| LP-03 | Preset 3 Movie mode | All zones set to Movie mode color |
+| LP-04 | Preset 4 Wild disco | All zones set to Wild disco caveman color |
+
+#### 4.6.18 Staff Access
+
+| ID | Test | Expected result |
+|---|---|---|
+| SA-01 | Staff authentication | Staff credentials return staff role user |
+| SA-02 | Access unoccupied room | Unoccupied room accessible to staff |
+| SA-03 | See occupied room | Occupied room visible as occupied |
+| SA-04 | Maintenance lights on | All zones set to full brightness |
+| SA-05 | Maintenance lights reset | All zones turned off |
+
+#### 4.6.19 Language Switching
+
+| ID | Test | Expected result |
+|---|---|---|
+| LS-01 | Switch to Finnish | App language updates to FIN |
+| LS-02 | Switch to Swedish | App language updates to SWE |
+| LS-03 | Switch back to English | App language restores to ENG |
+
+### 4.7 Developer User Testing
+
+In addition to automated tests, the developers performed manual user testing
+by running the application in the terminal and going through all available
+functionalities.
+
+**When:** 18.-20.4.2026
+
+**Who:** The development team
+
+**How:** The application was launched manually in the terminal and all
+features were tested by navigating through the menus as both a visitor
+and a staff member.
+
+#### What was tested
+
+| Area | Actions performed |
+|---|---|
+| Authentication | Logging in as visitor and staff with correct and incorrect credentials |
+| Room entry/exit | Entering and exiting rooms, verifying occupancy state and light behavior |
+| Light control | Adjusting brightness and color per zone |
+| Lighting presets | Applying all four presets and verifying color changes across zones |
+| Language switching | Switching between English, Finnish and Swedish and verifying UI updates |
+| Staff controls | Accessing rooms, turning maintenance lights on and off |
+
+#### Results
+
+No errors or unexpected behavior were found during manual testing.
+All features worked as intended.
+
+#### Observations and decisions
+
+During testing the team discussed whether the light reset on room exit
+should also reset brightness to a specific default level. It was decided
+that this feature will not be implemented at this stage, but it has been
+noted as a potential improvement for future development.
+
+---
+
+## 7. Pass and Fail Criteria
+
+**Pass:** All tests collected by pytest complete with status PASSED and no errors are reported.
+
+**Fail:** Any test returns FAILED or ERROR. Failures must be investigated, the defect fixed in the source code, and the tests re-run before the build is considered stable.
 
 ## 5. What we learned
 
